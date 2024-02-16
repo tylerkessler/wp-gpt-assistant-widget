@@ -14,8 +14,13 @@
 
 // Plugin Settings Registration
 function chat_gpt_register_settings() {
+    // Register GPT API Key
     add_option('chat_gpt_api_key', '');
     register_setting('chat_gpt_options_group', 'chat_gpt_api_key');
+    
+    // Register GPT Assistant ID
+    add_option('chat_gpt_assistant_id', '');
+    register_setting('chat_gpt_options_group', 'chat_gpt_assistant_id');
 }
 add_action('admin_init', 'chat_gpt_register_settings');
 
@@ -29,26 +34,35 @@ add_action('admin_menu', 'chat_gpt_register_options_page');
 
 // Settings Page Content
 function chat_gpt_options_page() {
-	?>
-	<div>
-		<h2>AAIMEA Chat GPT Widget Settings</h2>
-		<form method="post" action="options.php">
-		    <?php settings_fields('chat_gpt_options_group'); ?>
-		    <table>
-		        <tr>
-		            <th scope="row">
-		            	<label for="chat_gpt_api_key">API Key: </label>
-		            </th>
-		            <td style="width: 90%;">
-		            	<input style="width: 100%; !important" type="text" id="chat_gpt_api_key" name="chat_gpt_api_key" value="<?php echo get_option('chat_gpt_api_key'); ?>" />
-		            </td>
-		        </tr>
-		    </table>
-		    <?php submit_button(); ?>
-		</form>
-	</div>
-	<?php
+    ?>
+    <div>
+        <h2>AAIMEA Chat GPT Widget Settings</h2>
+        <form method="post" action="options.php">
+            <?php settings_fields('chat_gpt_options_group'); ?>
+            <table>
+                <tr>
+                    <th scope="row">
+                        <label for="chat_gpt_api_key">API Key: </label>
+                    </th>
+                    <td style="width: 90%;">
+                        <input style="width: 100%; !important" type="text" id="chat_gpt_api_key" name="chat_gpt_api_key" value="<?php echo get_option('chat_gpt_api_key'); ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="chat_gpt_assistant_id">Assistant ID: </label>
+                    </th>
+                    <td>
+                        <input style="width: 100%; !important" type="text" id="chat_gpt_assistant_id" name="chat_gpt_assistant_id" value="<?php echo get_option('chat_gpt_assistant_id'); ?>" />
+                    </td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
 }
+
 
 
 // Widget Enqueue on Page
@@ -135,8 +149,8 @@ function run_assistant($apiKey, $threadId) {
     // error_log('Preparing to run assistant with thread_id:' . $threadId);
 
     $data = [
-        'assistant_id' => 'asst_C1vIjoYLt1uVbp6a0Ll46gRi'
-    ];
+    'assistant_id' => get_option('chat_gpt_assistant_id')
+	];
     $apiKey = get_option('chat_gpt_api_key');
     $args = [
         'headers' => [
