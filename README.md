@@ -61,12 +61,3 @@ If you encounter any issues or have questions, please file an issue on the GitHu
 ## License
 
 This plugin is licensed under the [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html) or later.
-
-## Acknowledgements
-
-This plugin was created using OpenAI's GPT technology. We thank the OpenAI team for providing the API and support.
-
----
-
-Thank you for using or contributing to the WP GPT Assistant Widget. We hope this tool enhances your website's interactivity and user engagement.
-
