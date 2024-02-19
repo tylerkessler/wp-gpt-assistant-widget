@@ -3,38 +3,39 @@
   // Initialize Variables
   let threadId = null;
 
-  // Inject HTML
+// Inject HTML
   function injectHTML() {
-    var html = `
-      <div id="gpt-chat-ui">
-        <div id="gpt-chat-toggle">GPT: Member Survey Analyst</div>
-        <div id="gpt-chat-container">
-          <div id="gpt-chat-messages"></div>
-          <input type="text" id="gpt-chat-input" placeholder="Ask me anything...">
-        </div>
-      </div>
-    `;
-    $("body").append(html);
+
+    // Use the widgetHtmlPath from the localized chatGPT object
+    var widgetHtmlPath = chatGPT.widgetHtmlPath || '';
+
+    $.get(widgetHtmlPath, function(data) {
+      $("body").append(data);
+    }).fail(function() {
+      console.error('Error loading widget.html');
+    });
   }
 
-  // User Interactions Handler
+// User Interactions Handler
   function attachEventListeners() {
-    $('#gpt-chat-toggle').on('click', function() {
-      var container = $('#gpt-chat-container');
-      container.toggle();
-    });
+  // Event delegation for dynamically loaded elements
+  $('body').on('click', '#gpt-chat-toggle', function() {
+    var container = $('#gpt-chat-container');
+    container.toggle();
+  });
 
-    $('#gpt-chat-input').on('keypress', async function(e) {
-      if (e.key === 'Enter' && this.value.trim() !== '') {
-        const userMessage = this.value;
-        displayMessage('User', userMessage);
-        this.value = ''; // Clear input after sending
-        
-        const gptResponse = await fetchGPTResponse(userMessage);
-        displayMessage('GPT', gptResponse);
-      }
-    });
-  }
+  // Using event delegation for keypress event on dynamically loaded input
+  $('body').on('keypress', '#gpt-chat-input', async function(e) {
+    if (e.key === 'Enter' && this.value.trim() !== '') {
+      const userMessage = this.value;
+      displayMessage('User', userMessage);
+      this.value = ''; // Clear input after sending
+      
+      const gptResponse = await fetchGPTResponse(userMessage);
+      displayMessage('GPT', gptResponse);
+    }
+  });
+}
 
   // GPT: Create New Thread
   async function initializeThread() {
@@ -59,14 +60,6 @@
 	    console.error('Error initializing thread:', error);
 	  }
   }
-
-
-
-
-
-
-
-
 
   // Modified function to handle API requests via WordPress AJAX
   async function fetchGPTResponse(message) {

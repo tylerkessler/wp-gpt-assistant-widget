@@ -24,13 +24,11 @@ function chat_gpt_register_settings() {
 }
 add_action('admin_init', 'chat_gpt_register_settings');
 
-
 // Settings Page Registration
 function chat_gpt_register_options_page() {
     add_options_page('Chat GPT Widget', 'Chat GPT Widget', 'manage_options', 'chatgpt', 'chat_gpt_options_page');
 }
 add_action('admin_menu', 'chat_gpt_register_options_page');
-
 
 // Settings Page Content
 function chat_gpt_options_page() {
@@ -63,13 +61,8 @@ function chat_gpt_options_page() {
     <?php
 }
 
-
-
 // Widget Enqueue on Page
 function chat_gpt_enqueue_scripts() {
-
-	// [ ] Change this to member page only on production!!!
-
     if (is_front_page() || is_home()) {
         wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
         wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/chat-widget.js', array('jquery'), null, true);
@@ -77,15 +70,17 @@ function chat_gpt_enqueue_scripts() {
         // Create a nonce and pass it along with the script
         $nonce = wp_create_nonce('gpt_chat_nonce');
         
-        // Pass API key, endpoint, and nonce to JavaScript
+        // Pass API key, endpoint, nonce, and the path to the widget HTML to JavaScript
         wp_localize_script('chat-gpt-widget-js', 'chatGPT', array(
             'apiKey' => get_option('chat_gpt_api_key'),
             'endpoint' => admin_url('admin-ajax.php'),
-            'nonce' => $nonce
+            'nonce' => $nonce,
+            'widgetHtmlPath' => plugin_dir_url(__FILE__) . 'html/widget.html' // Path to the widget HTML
         ));
     }
 }
 add_action('wp_enqueue_scripts', 'chat_gpt_enqueue_scripts');
+
 
 
 // AJAX: New GPT Thread
@@ -121,7 +116,7 @@ add_action('wp_ajax_gpt_create_thread', 'gpt_create_thread');
 add_action('wp_ajax_nopriv_gpt_create_thread', 'gpt_create_thread');
 
 
-// AJAX handler for fetching GPT response
+// AJAX: Handler for Fetching GPT Response
 function handle_chat_interaction() {
     // Initial setup and nonce check...
     
@@ -142,7 +137,6 @@ function handle_chat_interaction() {
     $latestMessageContent = retrieve_and_send_latest_message(get_option('chat_gpt_api_key'), $threadId);
     wp_send_json_success(['message' => $latestMessageContent]);
 }
-
 
 // Simulated function to run the assistant and wait for its completion
 function run_assistant($apiKey, $threadId) {
@@ -198,7 +192,6 @@ function run_assistant($apiKey, $threadId) {
     }
  }
 
-
 // Function to check the run status
 function check_run_status($apiKey, $threadId, $runId) {
     $args = [
@@ -248,6 +241,7 @@ function send_message_to_thread($apiKey, $threadId, $userMessage) {
     }
     return $response;
 }
+
 // Updated function to retrieve the latest message from a thread, ensuring it matches the expected workflow
 function get_latest_message_from_thread($apiKey, $threadId) {
 
@@ -261,7 +255,7 @@ function get_latest_message_from_thread($apiKey, $threadId) {
         'timeout' => 15,
     ];
 
-    
+
     $response = wp_remote_get("https://api.openai.com/v1/threads/$threadId/messages", $args);
     if (is_wp_error($response)) {
         return 'Error retrieving messages.';
@@ -277,7 +271,6 @@ function get_latest_message_from_thread($apiKey, $threadId) {
 
     return 'No messages found.';
 }
-
 
 add_action('wp_ajax_gpt_chat', 'handle_chat_interaction');
 add_action('wp_ajax_nopriv_gpt_chat', 'handle_chat_interaction');
