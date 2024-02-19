@@ -13,10 +13,8 @@ The WP GPT Assistant Widget is a WordPress plugin designed to integrate a "custo
 ## Features
 
 - Seamless integration of GPT-powered chat into WordPress sites.
-- Easy-to-use widget that can be added to any page or post.
 - Secure management of API keys through the WordPress admin interface.
 - Real-time communication with OpenAI's GPT assistant.
-- Customizable UI to match your website's design.
 
 ## Installation
 
