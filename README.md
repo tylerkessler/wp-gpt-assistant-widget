@@ -32,6 +32,7 @@ The WP GPT Assistant Widget is a WordPress plugin designed to integrate a "custo
 2. Obtain an Assistant ID from OpenAI/Tyler.
 3. In the WordPress admin dashboard, go to Settings > GPT Assistant Widget.
 4. Enter your OpenAI API key and Assistant ID and save the changes.
+* NOTE: Open AI Threads must be activated for your orgination for this widget to work with Assistant.
 
 ## HTML Styling Guidelines
 * HTML can be edited in /html/widget.html
