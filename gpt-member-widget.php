@@ -21,8 +21,6 @@ function chat_gpt_register_settings() {
     // Register GPT Assistant ID
     add_option('chat_gpt_assistant_id', '');
     register_setting('chat_gpt_options_group', 'chat_gpt_assistant_id');
-
-    // Register
 }
 add_action('admin_init', 'chat_gpt_register_settings');
 
