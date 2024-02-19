@@ -12,78 +12,66 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-// Plugin Settings Registration
+
+// WP Plugin Registration
 function chat_gpt_register_settings() {
-    // Register GPT API Key
-    add_option('chat_gpt_api_key', '');
-    register_setting('chat_gpt_options_group', 'chat_gpt_api_key');
-    
-    // Register GPT Assistant ID
-    add_option('chat_gpt_assistant_id', '');
-    register_setting('chat_gpt_options_group', 'chat_gpt_assistant_id');
+
+  // API KEY:
+  add_option('chat_gpt_api_key', '');
+  register_setting('chat_gpt_options_group', 'chat_gpt_api_key');
+
+  // ASSISTANT ID:
+  add_option('chat_gpt_assistant_id', '');
+  register_setting('chat_gpt_options_group', 'chat_gpt_assistant_id');
 }
 add_action('admin_init', 'chat_gpt_register_settings');
 
-// Settings Page Registration
+
+// WP Admin Options Page Registration
 function chat_gpt_register_options_page() {
-    add_options_page('Chat GPT Widget', 'Chat GPT Widget', 'manage_options', 'chatgpt', 'chat_gpt_options_page');
+  add_options_page('Chat GPT Widget', 'Chat GPT Widget', 'manage_options', 'chatgpt', 'chat_gpt_options_page');
 }
 add_action('admin_menu', 'chat_gpt_register_options_page');
 
-// Settings Page Content
+
+// WP Admin Options Page
 function chat_gpt_options_page() {
-    ?>
-    <div>
-        <h2>AAIMEA Chat GPT Widget Settings</h2>
-        <form method="post" action="options.php">
-            <?php settings_fields('chat_gpt_options_group'); ?>
-            <table>
-                <tr>
-                    <th scope="row">
-                        <label for="chat_gpt_api_key">API Key: </label>
-                    </th>
-                    <td style="width: 90%;">
-                        <input style="width: 100%; !important" type="text" id="chat_gpt_api_key" name="chat_gpt_api_key" value="<?php echo get_option('chat_gpt_api_key'); ?>" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">
-                        <label for="chat_gpt_assistant_id">Assistant ID: </label>
-                    </th>
-                    <td>
-                        <input style="width: 100%; !important" type="text" id="chat_gpt_assistant_id" name="chat_gpt_assistant_id" value="<?php echo get_option('chat_gpt_assistant_id'); ?>" />
-                    </td>
-                </tr>
-            </table>
-            <?php submit_button(); ?>
-        </form>
-    </div>
-    <?php
+  ?><div><h2>Chat GPT Assistant Widget Settings</h2>
+    <form method="post" action="options.php"><?php settings_fields('chat_gpt_options_group'); ?>
+      <table>
+        <!-- API KEY -->
+        <tr><th scope="row"><label for="chat_gpt_api_key">API Key: </label></th><td style="width: 90%;"><input style="width: 100%; !important" type="text" id="chat_gpt_api_key" name="chat_gpt_api_key" value="<?php echo get_option('chat_gpt_api_key'); ?>" /></td></tr>
+        <!-- ASSISTANT ID -->
+        <tr><th scope="row"><label for="chat_gpt_assistant_id">Assistant ID: </label></th><td><input style="width: 100%; !important" type="text" id="chat_gpt_assistant_id" name="chat_gpt_assistant_id" value="<?php echo get_option('chat_gpt_assistant_id'); ?>" /></td></tr>
+      </table>
+      <?php submit_button(); ?>
+    </form>
+  </div><?php
 }
 
-// Widget Enqueue on Page
+
+// HTML Widget Enqueue on Page
 function chat_gpt_enqueue_scripts() {
-    if (is_front_page() || is_home()) {
-        wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
-        wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/chat-widget.js', array('jquery'), null, true);
-        
-        // Create a nonce and pass it along with the script
-        $nonce = wp_create_nonce('gpt_chat_nonce');
-        
-        // Pass API key, endpoint, nonce, and the path to the widget HTML to JavaScript
-        wp_localize_script('chat-gpt-widget-js', 'chatGPT', array(
-            'apiKey' => get_option('chat_gpt_api_key'),
-            'endpoint' => admin_url('admin-ajax.php'),
-            'nonce' => $nonce,
-            'widgetHtmlPath' => plugin_dir_url(__FILE__) . 'html/widget.html' // Path to the widget HTML
-        ));
-    }
+  if (is_front_page() || is_home()) {
+      wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
+      wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/chat-widget.js', array('jquery'), null, true);
+      
+      $nonce = wp_create_nonce('gpt_chat_nonce');
+      
+      // Pass API key, endpoint, nonce, and the path to the widget HTML to JavaScript
+      wp_localize_script('chat-gpt-widget-js', 'chatGPT', array(
+          'apiKey' => get_option('chat_gpt_api_key'),
+          'endpoint' => admin_url('admin-ajax.php'),
+          'nonce' => $nonce,
+          'widgetHtmlPath' => plugin_dir_url(__FILE__) . 'html/widget.html'
+      ));
+  }
 }
 add_action('wp_enqueue_scripts', 'chat_gpt_enqueue_scripts');
 
 
 
-// AJAX: New GPT Thread
+// Create New GPT Thread on Page Load
 function gpt_create_thread() {
     check_ajax_referer('gpt_chat_nonce', '_ajax_nonce');
     $apiKey = get_option('chat_gpt_api_key');
@@ -116,7 +104,7 @@ add_action('wp_ajax_gpt_create_thread', 'gpt_create_thread');
 add_action('wp_ajax_nopriv_gpt_create_thread', 'gpt_create_thread');
 
 
-// AJAX: Handler for Fetching GPT Response
+// Create New Message on Thread
 function handle_chat_interaction() {
     // Initial setup and nonce check...
     
@@ -138,7 +126,8 @@ function handle_chat_interaction() {
     wp_send_json_success(['message' => $latestMessageContent]);
 }
 
-// Simulated function to run the assistant and wait for its completion
+
+// Create New Assistant Run > Then Check To See If It's Done
 function run_assistant($apiKey, $threadId) {
     // error_log('Preparing to run assistant with thread_id:' . $threadId);
 
@@ -192,7 +181,8 @@ function run_assistant($apiKey, $threadId) {
     }
  }
 
-// Function to check the run status
+
+// Check Assistant Run Status
 function check_run_status($apiKey, $threadId, $runId) {
     $args = [
         'headers' => [
@@ -205,7 +195,8 @@ function check_run_status($apiKey, $threadId, $runId) {
     return wp_remote_get($url, $args);
 }
 
-// Function to retrieve and send the latest message from the thread
+
+// Get Latest Message From Thread (AKA Assistant Response)
 function retrieve_and_send_latest_message($apiKey, $threadId) {
     $latestMessage = get_latest_message_from_thread($apiKey, $threadId);
     if ($latestMessage === 'Error retrieving messages.' || $latestMessage === 'No messages found.') {
@@ -214,7 +205,7 @@ function retrieve_and_send_latest_message($apiKey, $threadId) {
     return $latestMessage; // Return the content of the latest message
 }
 
-// Function to send a message to the OpenAI thread
+// Create New Message on Thread
 function send_message_to_thread($apiKey, $threadId, $userMessage) {
     error_log('Preparing to send message to thread.');
     $data = [
