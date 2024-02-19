@@ -1,4 +1,6 @@
-# WP GPT Assistant Widget (AAIMEA)
+# WP GPT Assistant Widget
+
+Built for AAIMEA.
 
 The WP GPT Assistant Widget is a WordPress plugin designed to integrate a "custom GPT" like experience using OpenAI's GPT assistant in a chat widget for wordpress.
 
@@ -24,12 +26,17 @@ The WP GPT Assistant Widget is a WordPress plugin designed to integrate a "custo
 4. Choose the downloaded zip file and click 'Install Now'.
 5. After the installation is complete, activate the plugin through the 'Plugins' menu in WordPress.
 
-## Configuration
+## API Keys Configuration
 
 1. Obtain an API key from OpenAI/Tyler.
 2. Obtain an Assistant ID from OpenAI/Tyler.
 3. In the WordPress admin dashboard, go to Settings > GPT Assistant Widget.
 4. Enter your OpenAI API key and Assistant ID and save the changes.
+* NOTE: Open AI Threads must be activated for your orgination for this widget to work with Assistant.
+
+## HTML Styling Guidelines
+* HTML can be edited in /html/widget.html
+* CSS can be edited in /css/styles.css
 
 ## Usage
 
