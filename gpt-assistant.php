@@ -164,7 +164,6 @@ function check_run_status($apiKey, $threadId, $runId) {
   return wp_remote_get($url, $args);
 }
 
-// Get Latest Message
 function get_latest_message($apiKey, $threadId) {
   $args=['timeout'=>15,'headers'=>['Content-Type'=>'application/json','Authorization'=>'Bearer '.$apiKey,'OpenAI-Beta'=>'assistants=v1']];
   $response = wp_remote_get("https://api.openai.com/v1/threads/$threadId/messages", $args);
@@ -177,10 +176,18 @@ function get_latest_message($apiKey, $threadId) {
   // Return Latest Message
   if (isset($data['data']) && !empty($data['data'])) {
     $latestMessage = reset($data['data']);
-    error_log('[GPT-Widget] GPT: "' . $latestMessage['content'][0]['text']['value'] . '"');
-    return $latestMessage['content'][0]['text']['value'] ?? 'No content available';
+
+    // Broad regex pattern to ensure capturing all variations
+    $filteredMessage = preg_replace('/【.*?†source】/', '', $latestMessage['content'][0]['text']['value']);
+    // Additionally remove any potential whitespace around the removed citations
+    $filteredMessage = preg_replace('/\s+/', ' ', $filteredMessage);
+
+    error_log('[GPT-Widget] GPT: "' . $filteredMessage . '"');
+    return trim($filteredMessage) ?? 'No content available';
   }
   return 'No messages found.';
 }
+
+
 
 ?>
