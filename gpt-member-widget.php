@@ -97,8 +97,6 @@ function gpt_create_thread() {
 add_action('wp_ajax_gpt_create_thread', 'gpt_create_thread');
 add_action('wp_ajax_nopriv_gpt_create_thread', 'gpt_create_thread');
 
-
-
 // New User Chat (gpt_chat)
 function handle_chat_interaction() {
 

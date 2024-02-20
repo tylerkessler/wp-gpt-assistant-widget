@@ -196,6 +196,6 @@ button {
     border: 1px solid #ccc;
 }
 
-#gpt-chat-messages {
+#gpt-chat-container {
     overflow: scroll;
 }

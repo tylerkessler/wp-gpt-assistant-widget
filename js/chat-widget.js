@@ -42,7 +42,7 @@
       const response = await $.post(ajaxurl, data);
       if (response.hasOwnProperty('success') && response.success && response.data.threadId) {
         threadId = response.data.threadId;
-        console.log('New Thread Created', threadId)
+        console.log('New Thread Created:', threadId)
         displayMessage('GPT', "Hello! How can I assist you today?");
       } else {console.error('Failed to initialize thread. Response:', response);}
     } catch (error) {console.error('Error initializing thread:', error);}
