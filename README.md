@@ -10,7 +10,7 @@ The WP GPT Assistant Widget is a WordPress plugin designed to integrate a "custo
 - [ ] Design Front End (Currently it's bare bones functionality)
 - [ ] Improve UX with server feedback, prompt suggestions, etc.
 - [ ] Test Assistant Responses with Brian
-- [ ] Add ability to load only on AAIMEA website (loads on index/homepage current)
+- [X] Add ability to load only on AAIMEA website (loads on index/homepage current)
 
 ## Features
 
