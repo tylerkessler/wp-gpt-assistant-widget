@@ -12,54 +12,130 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-// WP Plugin Registration
-function chat_gpt_register_settings() {
+// Open AI Options
+function register_options() {
 
-  // API KEY:
+  // Open AI API Key
   add_option('chat_gpt_api_key', '');
   register_setting('chat_gpt_options_group', 'chat_gpt_api_key');
 
-  // ASSISTANT ID:
+  // Open AI Assistant ID
   add_option('chat_gpt_assistant_id', '');
   register_setting('chat_gpt_options_group', 'chat_gpt_assistant_id');
-}
-add_action('admin_init', 'chat_gpt_register_settings');
 
-// WP Admin Options Page Registration
+  // URL Regular Expression
+  add_option('url_regular_expression', '');
+  register_setting('chat_gpt_options_group', 'url_regular_expression');
+
+}
+add_action('admin_init', 'register_options');
+
+// WP Options Page Registration
 function chat_gpt_register_options_page() {
-  add_options_page('Chat GPT Widget', 'Chat GPT Widget', 'manage_options', 'chatgpt', 'chat_gpt_options_page');
+  add_options_page('GPT Assistant', 'GPT Assistant', 'manage_options', 'GPT Assistant', 'chat_gpt_options_page');
 }
 add_action('admin_menu', 'chat_gpt_register_options_page');
 
-// WP Admin Options Page
+// WP Options Page Content
 function chat_gpt_options_page() {
-  ?><div><h2>Chat GPT Assistant Widget Settings</h2>
-    <form method="post" action="options.php"><?php settings_fields('chat_gpt_options_group'); ?>
-      <table>
-        <!-- API KEY: -->
-        <tr><th scope="row"><label for="chat_gpt_api_key">API Key: </label></th><td style="width: 90%;"><input style="width: 100%; !important" type="text" id="chat_gpt_api_key" name="chat_gpt_api_key" value="<?php echo get_option('chat_gpt_api_key'); ?>" /></td></tr>
-        <!-- ASSISTANT ID: -->
-        <tr><th scope="row"><label for="chat_gpt_assistant_id">Assistant ID: </label></th><td><input style="width: 100%; !important" type="text" id="chat_gpt_assistant_id" name="chat_gpt_assistant_id" value="<?php echo get_option('chat_gpt_assistant_id'); ?>" /></td></tr>
+  // Inline CSS for spacing and layout improvements
+  echo '<style>
+    .gpt-settings-table th, .gpt-settings-table td {
+      padding: 10px;
+      vertical-align: top;
+    }
+    .gpt-settings-table th {
+      text-align: right;
+      width: 20%;
+    }
+    .gpt-settings-table td input[type="text"] {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .gpt-settings-table .description {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 4px;
+    }
+  </style>';
+
+  ?> 
+  <div class="wrap">
+  <h2>GPT Assistant Settings</h2>
+  <!-- Developer Info and Useful Links -->
+  <div class="developer-info" style="margin-top: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;">
+    <h3>Developer Information & Resources</h3>
+    <p>For support, feature requests, or contributions, please reach out or explore the resources below:</p>
+    <ul>
+      <li><strong>GitHub Repository:</strong> <a href="https://github.com/tylerkessler/wp-gpt-assistant-widget" target="_blank">WP GPT Assistant Widget</a></li>
+      <li><strong>Developer Contact:</strong> Tyler Kessler</li>
+      <li><strong>Email:</strong> <a href="mailto:tyler.kessler@gmail.com">tyler.kessler@gmail.com</a></li>
+      <li><strong>Phone:</strong> (407) 415-6101</li>
+      <li><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/tylerkessler" target="_blank">linkedin.com/in/tylerkessler</a></li>
+    </ul>
+    <p>Contact me anytime for issues or inquiries. I'm here to help!</p>
+  </div>
+  
+  <!-- The rest of your form and settings go here -->
+
+
+    <form method="post" action="options.php">
+      <?php settings_fields('chat_gpt_options_group'); ?>
+      <table class="form-table gpt-settings-table">
+        
+        <!-- Open AI API Key -->
+        <tr>
+          <th scope="row"><label for="chat_gpt_api_key">API Key:</label></th>
+          <td>
+            <input type="text" id="chat_gpt_api_key" name="chat_gpt_api_key" value="<?php echo get_option('chat_gpt_api_key'); ?>" />
+          </td>
+        </tr>
+        
+        <!-- Open AI Assistant ID -->
+        <tr>
+          <th scope="row"><label for="chat_gpt_assistant_id">Assistant ID:</label></th>
+          <td>
+            <input type="text" id="chat_gpt_assistant_id" name="chat_gpt_assistant_id" value="<?php echo get_option('chat_gpt_assistant_id'); ?>" />
+          </td>
+        </tr>
+
+        <!-- URL Regular Expression -->
+        <tr>
+          <th scope="row"><label for="url_regular_expression">Regular Expression:</label></th>
+          <td>
+            <input type="text" id="url_regular_expression" name="url_regular_expression" value="<?php echo get_option('url_regular_expression'); ?>" />
+            <p class="description">
+              Enter a Regular Expression to match URLs where the widget should load. Use <code>.*</code> to include all pages. For specific paths, like all pages under "/members/", use <code>/blog/.*</code>. Ensure your pattern is correctly formatted.
+            </p>
+          </td>
+        </tr>
+      
       </table>
       <?php submit_button(); ?>
     </form>
-  </div><?php
+  </div>
+  <?php
 }
 
-// Enqueue HTML/Scripts
-function chat_gpt_enqueue_scripts() {
+// Enqueue Scripts
+function enqueue_scripts() {
+  // Get Admin Defined RegEx
+  $url_regex = get_option('url_regular_expression', '.*'); // Default to match everything if not set
 
-  // [ ] Add Custom URLs to Options Page and Change This
+  // Get User's Current URL
+  $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-  if (is_front_page() || is_home()) {
-
-    // CSS & JS
+  // Match User's URL with Admin's RegEx
+  if (preg_match("#$url_regex#", $current_url)) {
+    // If Matched, Then Enqueue CSS & JS
     wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
     wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/widget.js', array('jquery'), null, true);
-    
+
+    // WP Security Mechanism
     $nonce = wp_create_nonce('gpt_chat_nonce');
-    
-    // HTML Path & Localized Variables
+
+    // Localize Variables
     wp_localize_script('chat-gpt-widget-js', 'chatGPT', array(
       'apiKey' => get_option('chat_gpt_api_key'),
       'endpoint' => admin_url('admin-ajax.php'),
@@ -68,7 +144,7 @@ function chat_gpt_enqueue_scripts() {
     ));
   }
 }
-add_action('wp_enqueue_scripts', 'chat_gpt_enqueue_scripts');
+add_action('wp_enqueue_scripts', 'enqueue_scripts');
 
 // Create New Thread (gpt_create_thread')
 function gpt_create_thread() {
