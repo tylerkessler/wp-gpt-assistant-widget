@@ -12,23 +12,24 @@
   // User Interactions Handler
   function attachEventListeners() {
 
-    // Click to Toggle Widget Container
+    // User Clicks to Toggle Widget Container
     $('body').on('click','#gpt-chat-toggle',function(){$('#gpt-chat-container').toggle();});
 
-    // Push Enter to Prompt GPT
+    // User Pushes Enter to Prompt GPT
     $('body').on('keypress', '#gpt-chat-input', async function(e) {
       if (e.key === 'Enter' && this.value.trim() !== '') {
         const userMessage = this.value;
-
-        // Post Submitted Message to Display Area
         displayMessage('User', userMessage);
-
-        // Clear Text Field
         this.value = '';
+        this.disabled = true; // d
+        document.getElementById('gpt-chat-input').placeholder = "...";
 
-        // Waiting For a Response...
+        // [ ] Add Processing Animation
+
         const gptResponse = await fetchGPTResponse(userMessage);
         displayMessage('GPT', gptResponse);
+        this.disabled = false; //enable text field on response
+        document.getElementById('gpt-chat-input').placeholder = "Ask me anything..."
       }
     });
   }
@@ -42,11 +43,12 @@
       if (response.hasOwnProperty('success') && response.success && response.data.threadId) {
         threadId = response.data.threadId;
         console.log('New Thread Created', threadId)
+        displayMessage('GPT', "Hello! How can I assist you today?");
       } else {console.error('Failed to initialize thread. Response:', response);}
     } catch (error) {console.error('Error initializing thread:', error);}
   }
 
-  // Modified function to handle API requests via WordPress AJAX
+  // AJAX: Fetch GPT Response From User Initiated Prompt
   async function fetchGPTResponse(message) {
     if (!threadId) {
       console.error('GPT Thread ID is not initialized.');
@@ -64,9 +66,9 @@
     try {
       const response = await $.post(ajaxurl, data);
       if (response.success) {
-          return response.data.message; // Adjust based on your actual AJAX handler response
+        return response.data.message; // Adjust based on your actual AJAX handler response
       } else {
-          throw new Error('Response was not successful.');
+        throw new Error('Response was not successful.');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -76,6 +78,9 @@
 
   // Display messages in the UI
   function displayMessage(sender, message) {
+
+    // [ ] Remove Processing Animation
+
     var messagesContainer = $('#gpt-chat-messages');
     messagesContainer.append(`<div>${sender}: ${message}</div>`);
     messagesContainer.scrollTop(messagesContainer.prop("scrollHeight"));
@@ -83,7 +88,7 @@
 
   // Initialize View
   function init() {injectHTML(); attachEventListeners(); initializeThread();}
-  
+
   $(window).on('load', init);
 
 })(jQuery);
