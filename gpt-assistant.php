@@ -4,7 +4,7 @@
  * Plugin Name: AAIMEA Member GPT Integration
  * Plugin URI: https://github.com/tylerkessler/wp-gpt-assistant-widget
  * Description: Integrates an AI-driven Chat GPT Widget into the AAIMEA Member Portal, enhancing user engagement with real-time assistance.
- * Version: 2024.02.19
+ * Version: 2024.02.20
  * Author: Tyler Kessler
  * Author Email: Tyler.Kessler@gmail.com
  * Author Phone: +1 (407) 415-6101
@@ -164,6 +164,7 @@ function check_run_status($apiKey, $threadId, $runId) {
   return wp_remote_get($url, $args);
 }
 
+// Get Latest Message
 function get_latest_message($apiKey, $threadId) {
   $args=['timeout'=>15,'headers'=>['Content-Type'=>'application/json','Authorization'=>'Bearer '.$apiKey,'OpenAI-Beta'=>'assistants=v1']];
   $response = wp_remote_get("https://api.openai.com/v1/threads/$threadId/messages", $args);
@@ -179,6 +180,7 @@ function get_latest_message($apiKey, $threadId) {
 
     // Broad regex pattern to ensure capturing all variations
     $filteredMessage = preg_replace('/【.*?†source】/', '', $latestMessage['content'][0]['text']['value']);
+    
     // Additionally remove any potential whitespace around the removed citations
     $filteredMessage = preg_replace('/\s+/', ' ', $filteredMessage);
 
@@ -187,7 +189,5 @@ function get_latest_message($apiKey, $threadId) {
   }
   return 'No messages found.';
 }
-
-
 
 ?>
