@@ -1,7 +1,7 @@
 <?php
 
-  // [ ] Add File Upload to this file:
-  //https://chat.openai.com/c/21806951-9318-43c5-be45-de631aeb14d0
+  // [ ] Add File Upload
+  //     https://chat.openai.com/c/21806951-9318-43c5-be45-de631aeb14d0
 
   // Open AI Options
   function register_options() {
