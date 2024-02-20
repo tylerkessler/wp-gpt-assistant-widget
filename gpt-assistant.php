@@ -55,7 +55,7 @@ function chat_gpt_enqueue_scripts() {
 
     // CSS & JS
     wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
-    wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/chat-widget.js', array('jquery'), null, true);
+    wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/widget.js', array('jquery'), null, true);
     
     $nonce = wp_create_nonce('gpt_chat_nonce');
     
