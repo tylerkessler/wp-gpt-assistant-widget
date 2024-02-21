@@ -4,7 +4,7 @@
  * Plugin Name: AAIMEA Member GPT Integration
  * Plugin URI: https://github.com/tylerkessler/wp-gpt-assistant-widget
  * Description: Integrates an AI-driven Chat GPT Widget into the AAIMEA Member Portal, enhancing user engagement with real-time assistance.
- * Version: 2024.02.20
+ * Version: 2024.02.21
  * Author: Tyler Kessler
  * Author Email: Tyler.Kessler@gmail.com
  * Author Phone: +1 (407) 415-6101
