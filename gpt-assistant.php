@@ -12,11 +12,15 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-// Admin Options
+// Set Variables
+set_time_limit(60);
+
+// Include Admin PHP
 require_once plugin_dir_path(__FILE__) . 'gpt-admin.php';
 
 // Enqueue Scripts
 function enqueue_scripts() {
+
   // Get Admin Defined RegEx
   $url_regex = get_option('url_regular_expression', '.*'); // Default to match everything if not set
 
@@ -66,10 +70,9 @@ add_action('wp_enqueue_scripts', 'enqueue_scripts');
 //     set_error_handler('custom_error_handler');
 // });
 
-// Initialize Chat Variables
-set_time_limit(30);
 
-// GPT Interactions
+
+// Include Messages PHP
 require_once plugin_dir_path(__FILE__) . 'gpt-messages.php';
 
 ?>

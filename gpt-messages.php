@@ -4,7 +4,7 @@
   function gpt_create_thread() {
     check_ajax_referer('gpt_chat_nonce', '_ajax_nonce');
     $apiKey = get_option('chat_gpt_api_key');
-    $args=['method'=>'POST','timeout'=>15,'headers'=>['Content-Type'=>'application/json','Authorization'=>'Bearer '.$apiKey,'OpenAI-Beta'=>'assistants=v1']];
+    $args=['method'=>'POST','timeout'=>5,'headers'=>['Content-Type'=>'application/json','Authorization'=>'Bearer '.$apiKey,'OpenAI-Beta'=>'assistants=v1']];
     $response = wp_remote_post("https://api.openai.com/v1/threads", $args);
 
     if (is_wp_error($response)) {
@@ -100,7 +100,7 @@
         while ($status !== 'completed') {
 
           // Wait
-          sleep(0.3);
+          sleep(0.5);
 
           // Check Run Status
           $statusResponse = check_run_status($apiKey, $threadId, $runId);
