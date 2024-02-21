@@ -43,6 +43,30 @@ function enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_scripts');
 
+// Error Handler
+// function custom_error_handler($severity, $message, $file, $line) {
+//   $errorMessage = "An error occurred: [Severity: $severity] $message in $file on line $line";
+//   $to = 'tyler.kessler+wp-gpt-assistant-widget@gmail.com';
+//   $subject = '[wp-gpt-assistant] Plugin Error Notification';
+//   $body = $errorMessage;
+//   $headers = array('Content-Type: text/html; charset=UTF-8');
+//   wp_mail($to, $subject, $body, $headers);
+//   error_log($errorMessage);
+// }
+// add_action('plugins_loaded', function() {
+//   set_error_handler('custom_error_handler');
+// });
+
+// // Error Handler: Ensure that wp_mail() is available
+// if (function_exists('wp_mail')) {
+//     set_error_handler('custom_error_handler');
+// }
+
+// add_action('plugins_loaded', function() {
+//     set_error_handler('custom_error_handler');
+// });
+
+
 // Create New Thread (gpt_create_thread')
 function gpt_create_thread() {
   check_ajax_referer('gpt_chat_nonce', '_ajax_nonce');
