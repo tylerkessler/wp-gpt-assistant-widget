@@ -1,8 +1,6 @@
 # WP GPT Assistant Widget
 
-Built for AAIMEA.
-
-The WP GPT Assistant Widget is a WordPress plugin designed to integrate a "custom GPT" like experience using OpenAI's GPT assistant in a chat widget for wordpress.
+WP GPT Assistant Widget: A WordPress plugin for embedding OpenAI's GPT chat assistant.
 
 ## Tasks
 - [x] Write backend code to get MVP / Beta working
