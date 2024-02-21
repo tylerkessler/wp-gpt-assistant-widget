@@ -5,7 +5,7 @@
 
 // Enqueue Styles
 function gpt_enqueue_admin_styles() {
-  wp_register_style('gpt-admin-css', plugins_url('/css/admin.css', __FILE__), array(), $version, 'all');
+  wp_register_style('gpt-admin-css', plugins_url('/css/admin.css', __FILE__), array(), 'all');
   wp_enqueue_style('gpt-admin-css');
 }
 add_action('admin_enqueue_scripts', 'gpt_enqueue_admin_styles');
@@ -46,8 +46,72 @@ function chat_gpt_register_options_page() {
 }
 add_action('admin_menu', 'chat_gpt_register_options_page');
 
+function get_current_assistant_instructions() {
+  $api_key = get_option('chat_gpt_api_key');
+  $assistant_id = get_option('chat_gpt_assistant_id');
+  $url = 'https://api.openai.com/v1/assistants/' . $assistant_id;
+  $response = wp_remote_get($url, array(
+    'headers' => array(
+      'Authorization' => 'Bearer ' . $api_key,
+      'Content-Type' => 'application/json',
+      'OpenAI-Beta' => 'assistants=v1'
+    )
+  ));
+  if (is_wp_error($response)) {
+      $error_message = $response->get_error_message();
+  } else {
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body); 
+    if (!empty($data->instructions)) {
+      $instructions = $data->instructions;
+      update_option('assistant_instructions', $instructions);
+    } 
+  }
+}
+
+// function update_openai_assistant_instructions($new_instructions) {
+//   error_log("Updating Open AI Instructions!");
+//   $api_key = get_option('chat_gpt_api_key');
+//   $assistant_id = get_option('chat_gpt_assistant_id');
+//   $url = "https://api.openai.com/v1/assistants/{$assistant_id}";
+//   $body = json_encode([
+//       'instructions' => $new_instructions,
+//   ]);
+
+//   $response = wp_remote_post($url, array(
+//       'method'    => 'PATCH',
+//       'headers'   => array(
+//           'Authorization' => 'Bearer ' . $api_key,
+//           'Content-Type'  => 'application/json',
+//           'OpenAI-Beta' => 'assistants=v1'
+//       ),
+//       'body' => $body,
+//   ));
+
+//   if (is_wp_error($response)) {
+//       $error_message = $response->get_error_message();
+//       error_log("Failed to update assistant instructions: $error_message");
+//   } else {
+//       error_log('Successfully updated assistant instructions.');
+//   }
+// }
+
+
 // WP Options Page Content
 function chat_gpt_options_page() {
+
+  // // Update Open AI Instructions
+  // if (isset($_POST['submit']) && check_admin_referer('update-assistant-instructions', 'assistant-instructions-nonce')) {
+  //   if (!empty($_POST['assistant_instructions'])) {
+  //     $new_instructions = sanitize_textarea_field($_POST['assistant_instructions']);
+  //     update_openai_assistant_instructions($new_instructions);
+  //     wp_nonce_field('update-assistant-instructions', 'assistant-instructions-nonce');
+  //   }
+  // }
+  
+  // Get Assistant Instructions
+  if (!empty(get_option('chat_gpt_api_key')) && !empty(get_option('chat_gpt_assistant_id'))) get_current_assistant_instructions();
+
   echo '<div class="wrap">
 
     <h2>GPT Assistant Settings</h2>
@@ -118,5 +182,6 @@ function chat_gpt_options_page() {
       </div>
     </form>
   </div>';
+  wp_nonce_field('update-assistant-instructions', 'assistant-instructions-nonce');
 }
 ?>
