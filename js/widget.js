@@ -45,7 +45,10 @@
         console.log('New Thread Created:', threadId)
         displayMessage('GPT', "Hello! How can I assist you today?");
       } else {console.error('Failed to initialize thread. Response:', response);}
-    } catch (error) {console.error('Error initializing thread:', error);}
+    } catch (error) {
+      console.error('Error initializing thread:', error);
+      document.getElementById('gpt-chat-ui').style.display = 'none'; // hide if API fails
+    }
   }
 
   // AJAX: Fetch GPT Response From User Initiated Prompt
