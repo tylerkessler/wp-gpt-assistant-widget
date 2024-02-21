@@ -21,6 +21,10 @@ function register_options() {
   add_option('chat_gpt_assistant_id', '');
   register_setting('chat_gpt_options_group', 'chat_gpt_assistant_id');
 
+  // Open AI Organization ID
+  add_option('chat_gpt_organization_id', '');
+  register_setting('chat_gpt_options_group', 'chat_gpt_organization_id');
+
   // URL Regular Expression
   add_option('url_regular_expression', '');
   register_setting('chat_gpt_options_group', 'url_regular_expression');
@@ -45,24 +49,38 @@ add_action('admin_menu', 'chat_gpt_register_options_page');
 // WP Options Page Content
 function chat_gpt_options_page() {
   echo '<div class="wrap">
+
     <h2>GPT Assistant Settings</h2>
+
     <form method="post" action="options.php">';
+
       settings_fields('chat_gpt_options_group');
       echo '<table class="form-table gpt-settings-table">
+      
       <tr>
         <th scope="row"><label for="chat_gpt_api_key">API Key:</label></th>
         <td>
           <input type="text" col="75" id="chat_gpt_api_key" name="chat_gpt_api_key" value="' . esc_attr(get_option('chat_gpt_api_key')) . '" />
+            <p class="description"><a href="https://platform.openai.com/api-keys" target="_blank">Open AI Keys</a></p>
         </td>
       </tr>
       <tr>
         <th scope="row"><label for="chat_gpt_assistant_id">Assistant ID:</label></th>
         <td>
           <input type="text" col="50" id="chat_gpt_assistant_id" name="chat_gpt_assistant_id" value="' . esc_attr(get_option('chat_gpt_assistant_id')) . '" />
+          <p class="description"><a href="https://platform.openai.com/assistants" target="_blank">Open AI Assistants</a></p>
         </td>
       </tr>
       <tr>
-        <th scope="row"><label for="url_regular_expression">URL Regular Expression:</label></th>
+        <th scope="row"><label for="chat_gpt_organization_id">Organization ID:</label></th>
+        <td>
+          <input type="text" col="50" id="chat_gpt_assistant_id" name="chat_gpt_organization_id" value="' . esc_attr(get_option('chat_gpt_organization_id')) . '" />
+          <p class="description"><a href="https://platform.openai.com/account/organization" target="_blank">Open AI Threads</a> must be set to <code>Visible to organization owners</code>.</p>
+        </td>
+      </tr>
+
+      <tr>
+        <th scope="row"><label for="url_regular_expression">URL Matching:</label></th>
         <td>
           <input type="text" id="url_regular_expression" name="url_regular_expression" value="' . esc_attr(get_option('url_regular_expression')) . '" />
           <p class="description">Define a regular expression to match the URLs where the widget should be displayed. For example, to match all member pages, use something like <code>.*/members/.*</code>.</p>

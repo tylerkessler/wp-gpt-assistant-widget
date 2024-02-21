@@ -1,10 +1,10 @@
 .gpt-settings-table th, .gpt-settings-table td {
-        padding: 10px;
-        vertical-align: top;
-    }
+    padding: 10px;
+    vertical-align: top;
+}
 .gpt-settings-table th {
-    text-align: right;
-    width: 20%;
+    text-align: left;
+    width: 25%;
 }
 .gpt-settings-table td input[type="text"] {
     width: 35em;
