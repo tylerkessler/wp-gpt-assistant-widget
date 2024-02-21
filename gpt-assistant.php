@@ -66,6 +66,8 @@ add_action('wp_enqueue_scripts', 'enqueue_scripts');
 //     set_error_handler('custom_error_handler');
 // });
 
+// Initialize Chat Variables
+set_time_limit(30);
 
 // Create New Thread (gpt_create_thread')
 function gpt_create_thread() {
