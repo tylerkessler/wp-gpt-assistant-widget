@@ -94,20 +94,37 @@ function gpt_create_thread() {
 add_action('wp_ajax_gpt_create_thread', 'gpt_create_thread');
 add_action('wp_ajax_nopriv_gpt_create_thread', 'gpt_create_thread');
 
-// New User Chat (gpt_chat)
+// Chat Interaction Handler
 function handle_chat_interaction() {
 
-  //Get Thread ID
+  //Send Message
   $threadId = sanitize_text_field($_POST['threadId']);
-
-  // Send Message
   $userMessage = sanitize_text_field($_POST['message']);
   $messageResponse = send_message(get_option('chat_gpt_api_key'), $threadId, $userMessage);
-  if (is_wp_error($messageResponse)) {wp_send_json_error(['message' => 'Error sending message.']); return;}
-  
-  // Run Assistant On Sent Message
-  $gptResponse = run_assistant(get_option('chat_gpt_api_key'), $threadId);
-  wp_send_json_success(['message' => $gptResponse]);
+  if (is_wp_error($messageResponse)) return wp_send_json_error(['message' => 'Error sending message.']);
+
+  // Open AI API Sluggishness Handler
+  $retryCount = 0; $maxRetries = 3; $retryDelay = 2;
+
+  while ($retryCount < $maxRetries) {
+
+    // Run Assistant On Sent Message
+    $gptResponse = run_assistant(get_option('chat_gpt_api_key'), $threadId);
+    
+    // Check if response indicates an active run conflict
+    if (isset($gptResponse['error']) && strpos($gptResponse['error']['message'], "already has an active run") !== false) {
+
+      // If Assistant Is Still Running
+      error_log('Active run conflict detected for thread ' . $threadId . '. Retrying after delay...');
+      sleep($retryDelay); // Wait before retrying
+      $retryCount++; // Increment the retry counter
+
+    } else {
+      wp_send_json_success(['message' => $gptResponse]);
+      return;
+    }
+  }
+  wp_send_json_error(['message' => 'The assistant is currently busy. Please try again in a few moments.']);
 }
 add_action('wp_ajax_gpt_chat', 'handle_chat_interaction');
 add_action('wp_ajax_nopriv_gpt_chat', 'handle_chat_interaction');
