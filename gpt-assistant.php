@@ -3,8 +3,8 @@
 /**
  * Plugin Name: AAIMEA Member GPT Integration
  * Plugin URI: https://github.com/tylerkessler/wp-gpt-assistant-widget
- * Description: Integrates an AI-driven Chat GPT Widget into the AAIMEA Member Portal, enhancing user engagement with real-time assistance.
- * Version: 2024.02.21
+ * Description: IWP GPT Assistant Widget: A WordPress plugin for embedding OpenAI's GPT chat assistant.
+ * Version: 2024.02.22
  * Author: Tyler Kessler
  * Author Email: Tyler.Kessler@gmail.com
  * Author Phone: +1 (407) 415-6101
@@ -15,28 +15,23 @@
 // Set Variables
 set_time_limit(60);
 
-// Include Admin PHP
+// Include Admin
 require_once plugin_dir_path(__FILE__) . 'gpt-admin.php';
 
 // Enqueue Scripts
 function enqueue_scripts() {
 
-  // Get Admin Defined RegEx
-  $url_regex = get_option('url_regular_expression', '.*'); // Default to match everything if not set
-
-  // Get User's Current URL
+  // Get Current URL and RegEx
+  $url_regex = get_option('url_regular_expression', '.*'); 
   $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-  // Match User's URL with Admin's RegEx
+  // Enqueue When URL Matches RegEx
   if (preg_match("#$url_regex#", $current_url)) {
-    // If Matched, Then Enqueue CSS & JS
     wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
     wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/widget.js', array('jquery'), null, true);
-
-    // WP Security Mechanism
     $nonce = wp_create_nonce('gpt_chat_nonce');
 
-    // Localize Variables
+    // Localize JS Variables
     wp_localize_script('chat-gpt-widget-js', 'chatGPT', array(
       'apiKey' => get_option('chat_gpt_api_key'),
       'endpoint' => admin_url('admin-ajax.php'),
@@ -47,6 +42,7 @@ function enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_scripts');
 
+// [ ] Commented Out Till Test in Dev/Test Environments
 // Error Handler
 // function custom_error_handler($severity, $message, $file, $line) {
 //   $errorMessage = "An error occurred: [Severity: $severity] $message in $file on line $line";
@@ -70,9 +66,7 @@ add_action('wp_enqueue_scripts', 'enqueue_scripts');
 //     set_error_handler('custom_error_handler');
 // });
 
-
-
-// Include Messages PHP
+// Include Messages
 require_once plugin_dir_path(__FILE__) . 'gpt-messages.php';
 
 ?>

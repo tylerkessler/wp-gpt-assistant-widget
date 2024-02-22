@@ -16,7 +16,7 @@
       $data = json_decode($body, true);
       if (isset($data['id'])) {
         wp_send_json_success(['threadId' => $data['id']]);
-        error_log('threadId: ' . $threadId); //browser console info
+        error_log('threadId: ' . $threadId);
 
       } else {
         error_log('GPT response format unexpected: ' . $body);
@@ -93,8 +93,8 @@
       if (isset($data['id'])) {
 
         // Initialize While Loop
-        $runId = $data['id']; // retrieve Run ID
-        $status = 'in_progress'; // initializing variable
+        $runId = $data['id'];
+        $status = 'in_progress';
 
         // While AI is Processing Reguest...
         while ($status !== 'completed') {
