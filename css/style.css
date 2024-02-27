@@ -66,6 +66,7 @@ button {
     margin-top: auto; /* Pushes the messages to the bottom */
     overflow-y: auto; /* Allows scrolling */
     flex-grow: 1;
+    display: contents;
 }
 
 #gpt-chat-input {
