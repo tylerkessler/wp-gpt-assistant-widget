@@ -20,24 +20,26 @@ require_once plugin_dir_path(__FILE__) . 'gpt-admin.php';
 
 // Enqueue Scripts
 function enqueue_scripts() {
-
-  // Get Current URL and RegEx
-  $url_regex = get_option('url_regular_expression', '.*'); 
-  $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-
-  // Enqueue When URL Matches RegEx
-  if (preg_match("#$url_regex#", $current_url)) {
-    wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
-    wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/widget.js', array('jquery'), null, true);
-    $nonce = wp_create_nonce('gpt_chat_nonce');
-
-    // Localize JS Variables
-    wp_localize_script('chat-gpt-widget-js', 'chatGPT', array(
-      'apiKey' => get_option('chat_gpt_api_key'),
-      'endpoint' => admin_url('admin-ajax.php'),
-      'nonce' => $nonce,
-      'widgetHtmlPath' => plugin_dir_url(__FILE__) . 'html/widget.html'
-    ));
+  if (is_singular()) { // Checks if a single post or page is being displayed
+  global $post;
+      
+    // Check if the 'show_ai_chat_widget' ACF field is true for the current post or page
+    if (get_field('show_ai_chat_widget', $post->ID) == true) {
+        // Enqueue your CSS and JS files
+        wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
+        wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/widget.js', array('jquery'), null, true);
+        
+        // Create a nonce for security
+        $nonce = wp_create_nonce('gpt_chat_nonce');
+        
+        // Localize the script to pass PHP values to your JS
+        wp_localize_script('chat-gpt-widget-js', 'chatGPT', array(
+          'apiKey' => get_option('chat_gpt_api_key'),
+          'endpoint' => admin_url('admin-ajax.php'),
+          'nonce' => $nonce,
+          'widgetHtmlPath' => plugin_dir_url(__FILE__) . 'html/widget.html'
+        ));
+    }
   }
 }
 add_action('wp_enqueue_scripts', 'enqueue_scripts');
