@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: AAIMEA Member GPT Integration
+ * Plugin Name: AAIM Member GPT Integration
  * Plugin URI: https://github.com/tylerkessler/wp-gpt-assistant-widget
- * Description: IWP GPT Assistant Widget: A WordPress plugin for embedding OpenAI's GPT chat assistant.
+ * Description: Member Analayst GPT Widget
  * Version: 2024.02.22
  * Author: Tyler Kessler
  * Author Email: Tyler.Kessler@gmail.com
@@ -32,7 +32,7 @@ function enqueue_scripts() {
         
 
         // Enqueue your CSS and JS files
-      get_random_gpt_prompt();
+        get_random_gpt_prompt();
         wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
         wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/widget.js', array('jquery'), null, true);
         
