@@ -56,10 +56,11 @@ button {
 
 #gpt-chat-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: normal;
     justify-content: flex-end; /* Aligns content to the bottom */
     height: 100%; /* Ensures the container takes full height */
     position: relative; /* For absolute positioning of children */
+    overflow: scroll;
 }
 
 #gpt-chat-messages {

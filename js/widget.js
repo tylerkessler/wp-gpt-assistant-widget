@@ -7,6 +7,17 @@
   function injectHTML() {
     var widgetHtmlPath = chatGPT.widgetHtmlPath || '';
     $.get(widgetHtmlPath,function(data){$("body").append(data);}).fail(function(){console.error('GPT Widget: Error loading html/widget.html');});
+    setRandomPlaceholder();
+  }
+
+  // Get Random Prompt as Placeholder
+  function setRandomPlaceholder() {
+    
+    if (typeof gptPrompts !== 'undefined' && gptPrompts.length > 0) {
+      var randomPrompt = gptPrompts[Math.floor(Math.random() * gptPrompts.length)];
+      console.log("randomPrompt:", randomPrompt);
+      document.getElementById('gpt-chat-input').placeholder = randomPrompt;
+    }
   }
 
   // User Interactions Handler
@@ -93,5 +104,6 @@
   function init() {injectHTML(); attachEventListeners(); initializeThread();}
 
   $(window).on('load', init);
+  
 
 })(jQuery);

@@ -20,15 +20,23 @@ require_once plugin_dir_path(__FILE__) . 'gpt-admin.php';
 
 // Enqueue Scripts
 function enqueue_scripts() {
+// Call Random Prompt
+        
+
   if (is_singular()) { // Checks if a single post or page is being displayed
   global $post;
       
     // Check if the 'show_ai_chat_widget' ACF field is true for the current post or page
     if (get_field('show_ai_chat_widget', $post->ID) == true) {
+
+        
+
         // Enqueue your CSS and JS files
+      get_random_gpt_prompt();
         wp_enqueue_style('chat-gpt-widget-css', plugin_dir_url(__FILE__) . 'css/style.css');
         wp_enqueue_script('chat-gpt-widget-js', plugin_dir_url(__FILE__) . 'js/widget.js', array('jquery'), null, true);
         
+
         // Create a nonce for security
         $nonce = wp_create_nonce('gpt_chat_nonce');
         
@@ -44,29 +52,17 @@ function enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_scripts');
 
-// [ ] Commented Out Till Test in Dev/Test Environments
-// Error Handler
-// function custom_error_handler($severity, $message, $file, $line) {
-//   $errorMessage = "An error occurred: [Severity: $severity] $message in $file on line $line";
-//   $to = 'tyler.kessler+wp-gpt-assistant-widget@gmail.com';
-//   $subject = '[wp-gpt-assistant] Plugin Error Notification';
-//   $body = $errorMessage;
-//   $headers = array('Content-Type: text/html; charset=UTF-8');
-//   wp_mail($to, $subject, $body, $headers);
-//   error_log($errorMessage);
-// }
-// add_action('plugins_loaded', function() {
-//   set_error_handler('custom_error_handler');
-// });
+function get_random_gpt_prompt() {
+  $suggested_prompts = get_option('suggested_prompts');
+  if (!empty($suggested_prompts)) {
+    $prompts_array = explode("\n", $suggested_prompts);
+    $prompts_array = array_filter($prompts_array, 'trim'); // Remove any empty values
+    // error_log(print_r($prompts_array, true));
+    // Localize the prompts array to the script
+    wp_localize_script('chat-gpt-widget-js', 'gptPrompts', $prompts_array);
+  }
 
-// // Error Handler: Ensure that wp_mail() is available
-// if (function_exists('wp_mail')) {
-//     set_error_handler('custom_error_handler');
-// }
-
-// add_action('plugins_loaded', function() {
-//     set_error_handler('custom_error_handler');
-// });
+}
 
 // Include Messages
 require_once plugin_dir_path(__FILE__) . 'gpt-messages.php';
