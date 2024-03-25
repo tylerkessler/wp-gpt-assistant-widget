@@ -12,7 +12,7 @@
 
   // Get Random Prompt as Placeholder
   function setRandomPlaceholder() {
-    
+
     if (typeof gptPrompts !== 'undefined' && gptPrompts.length > 0) {
       var randomPrompt = gptPrompts[Math.floor(Math.random() * gptPrompts.length)];
       console.log("randomPrompt:", randomPrompt);
@@ -24,7 +24,7 @@
   function attachEventListeners() {
 
     // User Clicks to Toggle Widget Container
-    $('body').on('click','#gpt-chat-toggle',function(){$('#gpt-chat-container').toggle();});
+    $('body').on('click','#gpt-chat-toggle',function(){$('#gpt-chat-ui').toggle();});
 
     // User Pushes Enter to Prompt GPT
     $('body').on('keypress', '#gpt-chat-input', async function(e) {
@@ -54,7 +54,7 @@
       if (response.hasOwnProperty('success') && response.success && response.data.threadId) {
         threadId = response.data.threadId;
         console.log('New Thread Created:', threadId)
-        displayMessage('GPT', "Hello! How can I assist you today?");
+        displayMessage('AAIM', "Hello! How can I assist you today?");
       } else {console.error('Failed to initialize thread. Response:', response);}
     } catch (error) {
       console.error('Error initializing thread:', error);

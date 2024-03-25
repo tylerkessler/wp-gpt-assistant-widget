@@ -55,7 +55,7 @@ button {
 }
 
 #gpt-chat-container {
-    display: flex;
+    display: inline;
     flex-direction: normal;
     justify-content: flex-end; /* Aligns content to the bottom */
     height: 100%; /* Ensures the container takes full height */
